@@ -1,0 +1,1313 @@
+fileFormatVersion: 2
+guid: 90c7ee8217b38ce4391ce364d694cc91
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1787547109324042465
+    second: Baldrick_2_m2_0
+  - first:
+      213: 7980719913309390413
+    second: Baldrick_2_m2_1
+  - first:
+      213: -7779163438148289927
+    second: Baldrick_2_m2_2
+  - first:
+      213: -1407578262469089964
+    second: Baldrick_2_m2_3
+  - first:
+      213: -6461804022226137681
+    second: Baldrick_2_m2_4
+  - first:
+      213: -6996543216653418307
+    second: Baldrick_2_m2_5
+  - first:
+      213: 449266939020533734
+    second: Baldrick_2_m2_6
+  - first:
+      213: 3828072901638456610
+    second: Baldrick_2_m2_7
+  - first:
+      213: 1504162413432523770
+    second: Baldrick_2_m2_8
+  - first:
+      213: 1843077742473773113
+    second: Baldrick_2_m2_9
+  - first:
+      213: 8859284777089316574
+    second: Baldrick_2_m2_10
+  - first:
+      213: -922014387168072563
+    second: Baldrick_2_m2_11
+  - first:
+      213: -8069969459247538508
+    second: Baldrick_2_m2_12
+  - first:
+      213: 8587870946184723722
+    second: Baldrick_2_m2_13
+  - first:
+      213: -3204373821648704983
+    second: Baldrick_2_m2_14
+  - first:
+      213: -5600326780347699030
+    second: Baldrick_2_m2_15
+  - first:
+      213: -3609872719696503378
+    second: Baldrick_2_m2_16
+  - first:
+      213: 135479636427939292
+    second: Baldrick_2_m2_17
+  - first:
+      213: 6342682943677656844
+    second: Baldrick_2_m2_18
+  - first:
+      213: 587199689188989643
+    second: Baldrick_2_m2_19
+  - first:
+      213: 1910972626844546371
+    second: Baldrick_2_m2_20
+  - first:
+      213: 4406536640387069646
+    second: Baldrick_2_m2_21
+  - first:
+      213: -3710055385936703269
+    second: Baldrick_2_m2_22
+  - first:
+      213: -6297421873111398696
+    second: Baldrick_2_m2_23
+  - first:
+      213: -4549985569061888248
+    second: Baldrick_2_m2_24
+  - first:
+      213: 1096741801184022119
+    second: Baldrick_2_m2_25
+  - first:
+      213: -711995015609765779
+    second: Baldrick_2_m2_26
+  - first:
+      213: -606614725239599879
+    second: Baldrick_2_m2_27
+  - first:
+      213: -4016221498952964097
+    second: Baldrick_2_m2_28
+  - first:
+      213: -4502613792749181717
+    second: Baldrick_2_m2_29
+  - first:
+      213: -3267457181328062553
+    second: Baldrick_2_m2_30
+  - first:
+      213: 6443667590377866601
+    second: Baldrick_2_m2_31
+  - first:
+      213: -4417952722599963449
+    second: Baldrick_2_m2_32
+  - first:
+      213: -8479237143421414854
+    second: Baldrick_2_m2_33
+  - first:
+      213: -5657996473620366000
+    second: Baldrick_2_m2_34
+  - first:
+      213: 3177685111560478804
+    second: Baldrick_2_m2_35
+  - first:
+      213: 265262220224546500
+    second: Baldrick_2_m2_36
+  - first:
+      213: 2249830043403635700
+    second: Baldrick_2_m2_37
+  - first:
+      213: 1656363797412170902
+    second: Baldrick_2_m2_38
+  - first:
+      213: 4018665284559281018
+    second: Baldrick_2_m2_39
+  - first:
+      213: 7811913820846186186
+    second: Baldrick_2_m2_40
+  - first:
+      213: -7943201210947377987
+    second: Baldrick_2_m2_41
+  - first:
+      213: 5842559502451280811
+    second: Baldrick_2_m2_42
+  - first:
+      213: 576320371981777132
+    second: Baldrick_2_m2_43
+  - first:
+      213: 7745239855322707147
+    second: Baldrick_2_m2_44
+  - first:
+      213: 5412641860885943396
+    second: Baldrick_2_m2_45
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Baldrick_2_m2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1246
+        width: 412
+        height: 380
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1fc679ff5b5137e0800000000000000
+      internalID: -1787547109324042465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_1
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 1247
+        width: 344
+        height: 415
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4641bc3a7631ce60800000000000000
+      internalID: 7980719913309390413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_2
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 1317
+        width: 454
+        height: 438
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97af67b911cda0490800000000000000
+      internalID: -7779163438148289927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_3
+      rect:
+        serializedVersion: 2
+        x: 1273
+        y: 1508
+        width: 546
+        height: 389
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 455e7f72707477ce0800000000000000
+      internalID: -1407578262469089964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_4
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 1406
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fad45075a7f0356a0800000000000000
+      internalID: -6461804022226137681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_5
+      rect:
+        serializedVersion: 2
+        x: 1273
+        y: 1133
+        width: 545
+        height: 373
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db044b3830947ee90800000000000000
+      internalID: -6996543216653418307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_6
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 1393
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ef55a596ed1c3600800000000000000
+      internalID: 449266939020533734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_7
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 1364
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2258574a50c002530800000000000000
+      internalID: 3828072901638456610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_8
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 1345
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afbc321eebbdfd410800000000000000
+      internalID: 1504162413432523770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_9
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 901
+        width: 369
+        height: 314
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9300495117de39910800000000000000
+      internalID: 1843077742473773113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_10
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 960
+        width: 431
+        height: 285
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed63f66f09082fa70800000000000000
+      internalID: 8859284777089316574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_11
+      rect:
+        serializedVersion: 2
+        x: 817
+        y: 1012
+        width: 455
+        height: 296
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8c2c07ccc85433f0800000000000000
+      internalID: -922014387168072563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_12
+      rect:
+        serializedVersion: 2
+        x: 1442
+        y: 852
+        width: 387
+        height: 281
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4be9c498885b10090800000000000000
+      internalID: -8069969459247538508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_13
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 658
+        width: 423
+        height: 242
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0dfc34002f3e2770800000000000000
+      internalID: 8587870946184723722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_14
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 694
+        width: 329
+        height: 243
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92a61199cf6c783d0800000000000000
+      internalID: -3204373821648704983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_15
+      rect:
+        serializedVersion: 2
+        x: 755
+        y: 716
+        width: 340
+        height: 233
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa0b44f0774a742b0800000000000000
+      internalID: -5600326780347699030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_16
+      rect:
+        serializedVersion: 2
+        x: 1102
+        y: 710
+        width: 339
+        height: 301
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaddd1a23e727edc0800000000000000
+      internalID: -3609872719696503378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_17
+      rect:
+        serializedVersion: 2
+        x: 1481
+        y: 557
+        width: 312
+        height: 292
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdd1693f20251e100800000000000000
+      internalID: 135479636427939292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 418
+        width: 256
+        height: 193
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0fe5d4488cb50850800000000000000
+      internalID: 6342682943677656844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_19
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 448
+        width: 401
+        height: 209
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bca54569107262800800000000000000
+      internalID: 587199689188989643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_20
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 467
+        width: 405
+        height: 227
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3457096ba73258a10800000000000000
+      internalID: 1910972626844546371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_21
+      rect:
+        serializedVersion: 2
+        x: 1066
+        y: 474
+        width: 414
+        height: 235
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec6b3044ab9272d30800000000000000
+      internalID: 4406536640387069646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_22
+      rect:
+        serializedVersion: 2
+        x: 1497
+        y: 363
+        width: 312
+        height: 193
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd0d730884c338cc0800000000000000
+      internalID: -3710055385936703269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_23
+      rect:
+        serializedVersion: 2
+        x: 1810
+        y: 364
+        width: 203
+        height: 306
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d68b6ceb201b98a0800000000000000
+      internalID: -6297421873111398696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 262
+        width: 269
+        height: 155
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80f99e65b343bd0c0800000000000000
+      internalID: -4549985569061888248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_25
+      rect:
+        serializedVersion: 2
+        x: 269
+        y: 273
+        width: 269
+        height: 155
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76e45ed7bd8683f00800000000000000
+      internalID: 1096741801184022119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_26
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 285
+        width: 361
+        height: 160
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d603bbc3e4c7e16f0800000000000000
+      internalID: -711995015609765779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_27
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 287
+        width: 341
+        height: 173
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fc82921f1fd497f0800000000000000
+      internalID: -606614725239599879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_28
+      rect:
+        serializedVersion: 2
+        x: 1245
+        y: 291
+        width: 251
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff72f9753d38348c0800000000000000
+      internalID: -4016221498952964097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_29
+      rect:
+        serializedVersion: 2
+        x: 1671
+        y: 216
+        width: 334
+        height: 147
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be429628c908381c0800000000000000
+      internalID: -4502613792749181717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_30
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 123
+        width: 360
+        height: 137
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a7442c5109a7a2d0800000000000000
+      internalID: -3267457181328062553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_31
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 125
+        width: 225
+        height: 146
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9658b2f88818c6950800000000000000
+      internalID: 6443667590377866601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_32
+      rect:
+        serializedVersion: 2
+        x: 588
+        y: 124
+        width: 291
+        height: 150
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c495f6f76740b2c0800000000000000
+      internalID: -4417952722599963449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_33
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 131
+        width: 232
+        height: 153
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3291143eb2b35a80800000000000000
+      internalID: -8479237143421414854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_34
+      rect:
+        serializedVersion: 2
+        x: 1112
+        y: 139
+        width: 224
+        height: 146
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05df1714f22ca71b0800000000000000
+      internalID: -5657996473620366000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_35
+      rect:
+        serializedVersion: 2
+        x: 1338
+        y: 137
+        width: 331
+        height: 152
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4502c9ad5c7691c20800000000000000
+      internalID: 3177685111560478804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_36
+      rect:
+        serializedVersion: 2
+        x: 1859
+        y: 0
+        width: 139
+        height: 208
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c6c0d875966ea300800000000000000
+      internalID: 265262220224546500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_37
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 121
+        height: 99
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fb431e1180093f10800000000000000
+      internalID: 2249830043403635700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_38
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 0
+        width: 134
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69cc19319169cf610800000000000000
+      internalID: 1656363797412170902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_39
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 0
+        width: 311
+        height: 121
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7b9955d8ca25c730800000000000000
+      internalID: 4018665284559281018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_40
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 0
+        width: 327
+        height: 124
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ace50831b3e796c60800000000000000
+      internalID: 7811913820846186186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_41
+      rect:
+        serializedVersion: 2
+        x: 904
+        y: 0
+        width: 136
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db46702659414c190800000000000000
+      internalID: -7943201210947377987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_42
+      rect:
+        serializedVersion: 2
+        x: 1040
+        y: 0
+        width: 384
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bab01ba89e0f41150800000000000000
+      internalID: 5842559502451280811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_43
+      rect:
+        serializedVersion: 2
+        x: 1426
+        y: 3
+        width: 193
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce87bc823508ff700800000000000000
+      internalID: 576320371981777132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_44
+      rect:
+        serializedVersion: 2
+        x: 1441
+        y: 0
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc435b4cc9e9c7b60800000000000000
+      internalID: 7745239855322707147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Baldrick_2_m2_45
+      rect:
+        serializedVersion: 2
+        x: 1621
+        y: 0
+        width: 236
+        height: 135
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 464148658119d1b40800000000000000
+      internalID: 5412641860885943396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 61698ff15269e044fa722ee3e919614d
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Baldrick_2_m2_0: -1787547109324042465
+      Baldrick_2_m2_1: 7980719913309390413
+      Baldrick_2_m2_10: 8859284777089316574
+      Baldrick_2_m2_11: -922014387168072563
+      Baldrick_2_m2_12: -8069969459247538508
+      Baldrick_2_m2_13: 8587870946184723722
+      Baldrick_2_m2_14: -3204373821648704983
+      Baldrick_2_m2_15: -5600326780347699030
+      Baldrick_2_m2_16: -3609872719696503378
+      Baldrick_2_m2_17: 135479636427939292
+      Baldrick_2_m2_18: 6342682943677656844
+      Baldrick_2_m2_19: 587199689188989643
+      Baldrick_2_m2_2: -7779163438148289927
+      Baldrick_2_m2_20: 1910972626844546371
+      Baldrick_2_m2_21: 4406536640387069646
+      Baldrick_2_m2_22: -3710055385936703269
+      Baldrick_2_m2_23: -6297421873111398696
+      Baldrick_2_m2_24: -4549985569061888248
+      Baldrick_2_m2_25: 1096741801184022119
+      Baldrick_2_m2_26: -711995015609765779
+      Baldrick_2_m2_27: -606614725239599879
+      Baldrick_2_m2_28: -4016221498952964097
+      Baldrick_2_m2_29: -4502613792749181717
+      Baldrick_2_m2_3: -1407578262469089964
+      Baldrick_2_m2_30: -3267457181328062553
+      Baldrick_2_m2_31: 6443667590377866601
+      Baldrick_2_m2_32: -4417952722599963449
+      Baldrick_2_m2_33: -8479237143421414854
+      Baldrick_2_m2_34: -5657996473620366000
+      Baldrick_2_m2_35: 3177685111560478804
+      Baldrick_2_m2_36: 265262220224546500
+      Baldrick_2_m2_37: 2249830043403635700
+      Baldrick_2_m2_38: 1656363797412170902
+      Baldrick_2_m2_39: 4018665284559281018
+      Baldrick_2_m2_4: -6461804022226137681
+      Baldrick_2_m2_40: 7811913820846186186
+      Baldrick_2_m2_41: -7943201210947377987
+      Baldrick_2_m2_42: 5842559502451280811
+      Baldrick_2_m2_43: 576320371981777132
+      Baldrick_2_m2_44: 7745239855322707147
+      Baldrick_2_m2_45: 5412641860885943396
+      Baldrick_2_m2_5: -6996543216653418307
+      Baldrick_2_m2_6: 449266939020533734
+      Baldrick_2_m2_7: 3828072901638456610
+      Baldrick_2_m2_8: 1504162413432523770
+      Baldrick_2_m2_9: 1843077742473773113
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
