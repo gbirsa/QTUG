@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
 [DisallowMultipleComponent]
 public class DamageBlinkFeedback2D : MonoBehaviour
@@ -41,6 +42,9 @@ public class DamageBlinkFeedback2D : MonoBehaviour
     private int fillPhasePropertyId;
     private int fillColorPropertyId;
     private bool flashActive;
+    private readonly Dictionary<Renderer, Material[]> originalMaterialsByRenderer = new Dictionary<Renderer, Material[]>();
+    private readonly Dictionary<Renderer, Material[]> flashMaterialsByRenderer = new Dictionary<Renderer, Material[]>();
+    private Shader spineFillShader;
 
     private void Reset()
     {
@@ -142,16 +146,19 @@ public class DamageBlinkFeedback2D : MonoBehaviour
             return;
         }
 
+        spineFillShader = Shader.Find("Spine/Skeleton Fill");
         originalSpriteColors = new Color[renderersToBlink.Length];
         for (int i = 0; i < renderersToBlink.Length; i++)
         {
-            if (renderersToBlink[i] is SpriteRenderer spriteRenderer)
+            Renderer renderer = renderersToBlink[i];
+            if (renderer is SpriteRenderer spriteRenderer)
             {
                 originalSpriteColors[i] = spriteRenderer.color;
             }
             else
             {
                 originalSpriteColors[i] = Color.white;
+                CacheFlashMaterials(renderer);
             }
         }
 
@@ -182,12 +189,84 @@ public class DamageBlinkFeedback2D : MonoBehaviour
                 continue;
             }
 
+            if (TrySetFlashMaterials(renderer, active))
+            {
+                continue;
+            }
+
             renderer.GetPropertyBlock(materialPropertyBlock);
             materialPropertyBlock.SetFloat(fillTogglePropertyId, active ? 1f : 0f);
             materialPropertyBlock.SetColor(fillColorPropertyId, flashColor);
             materialPropertyBlock.SetFloat(fillPhasePropertyId, active ? 1f : 0f);
             renderer.SetPropertyBlock(materialPropertyBlock);
         }
+    }
+
+    private void CacheFlashMaterials(Renderer renderer)
+    {
+        if (renderer == null || spineFillShader == null || originalMaterialsByRenderer.ContainsKey(renderer))
+        {
+            return;
+        }
+
+        Material[] originalMaterials = renderer.sharedMaterials;
+        if (originalMaterials == null || originalMaterials.Length == 0)
+        {
+            return;
+        }
+
+        Material[] flashMaterials = new Material[originalMaterials.Length];
+        bool hasValidFlashMaterial = false;
+
+        for (int i = 0; i < originalMaterials.Length; i++)
+        {
+            Material originalMaterial = originalMaterials[i];
+            if (originalMaterial == null)
+            {
+                flashMaterials[i] = null;
+                continue;
+            }
+
+            if (originalMaterial.shader == null || originalMaterial.shader.name != "Spine/Skeleton")
+            {
+                flashMaterials[i] = originalMaterial;
+                continue;
+            }
+
+            Material flashMaterial = new Material(originalMaterial);
+            flashMaterial.shader = spineFillShader;
+            flashMaterials[i] = flashMaterial;
+            hasValidFlashMaterial = true;
+        }
+
+        if (!hasValidFlashMaterial)
+        {
+            return;
+        }
+
+        originalMaterialsByRenderer[renderer] = originalMaterials;
+        flashMaterialsByRenderer[renderer] = flashMaterials;
+    }
+
+    private bool TrySetFlashMaterials(Renderer renderer, bool active)
+    {
+        if (renderer == null)
+        {
+            return false;
+        }
+
+        if (!originalMaterialsByRenderer.TryGetValue(renderer, out Material[] originalMaterials))
+        {
+            return false;
+        }
+
+        if (!flashMaterialsByRenderer.TryGetValue(renderer, out Material[] flashMaterials))
+        {
+            return false;
+        }
+
+        renderer.sharedMaterials = active ? flashMaterials : originalMaterials;
+        return true;
     }
 
     private void SetRenderersEnabled(bool enabled)

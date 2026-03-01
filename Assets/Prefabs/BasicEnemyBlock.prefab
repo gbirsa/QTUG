@@ -170,7 +170,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Size: {x: 8, y: 10}
-  m_EdgeRadius: 0
+  m_EdgeRadius: 0.4
 --- !u!114 &5768942106660938018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,6 +207,7 @@ MonoBehaviour:
   bodyCollider: {fileID: 3999178939855628449}
   spriteRenderer: {fileID: 6289148346196179321}
   health: {fileID: 5768942106660938018}
+  movementMode: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -216,6 +217,33 @@ MonoBehaviour:
   edgeCheckDownDistance: 4
   wallCheckDistance: 0.4
   wallCheckHeightOffset: 0
+  lowObstacleCheckHeight: 1.2
+  useAggroChase: 1
+  chaseTarget: {fileID: 0}
+  aggroRange: 132.9
+  aggroHeightTolerance: 69
+  chaseStopDistance: 2
+  chaseSpeed: 50
+  idleWhenNoTarget: 0
+  groundCheckDistance: 0.25
+  airControl: 0.347
+  jumpForce: 38
+  jumpCooldown: 0.45
+  jumpRiseGravityMultiplier: 6
+  jumpFallGravityMultiplier: 10
+  ledgeClearUpwardBoost: 12
+  ledgeClearForwardSpeed: 18
+  stuckWallDropSpeed: 8
+  fallingRepathVelocityThreshold: -0.5
+  jumpOverWalls: 1
+  jumpAcrossGaps: 1
+  jumpTowardHigherTarget: 1
+  minTargetHeightForJump: 4
+  maxTargetHeightForJump: 28
+  minHorizontalDistanceForJump: 6
+  higherTargetJumpApproachDistance: 18
+  lowerTargetDropHeight: 4
+  traversalAnticipationTime: 0.18
 --- !u!114 &3996962907188075115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,7 +260,7 @@ MonoBehaviour:
   ownerCollider: {fileID: 0}
   targetTeam: 1
   damage: 1
-  hitCooldown: 0.75
+  hitCooldown: 1
 --- !u!114 &4502781635738742901
 MonoBehaviour:
   m_ObjectHideFlags: 0
