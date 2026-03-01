@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2245517569979591474}
-  m_Layer: 3
+  m_Layer: 9
   m_Name: WallCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,7 +46,11 @@ GameObject:
   - component: {fileID: 4326264124863185150}
   - component: {fileID: 1944247373222190387}
   - component: {fileID: 2436077898841214784}
-  m_Layer: 3
+  - component: {fileID: 7016513412288940011}
+  - component: {fileID: 7784050719025331142}
+  - component: {fileID: 3815474752492123401}
+  - component: {fileID: 3915251459992504271}
+  m_Layer: 9
   m_Name: Baldrick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69,6 +73,7 @@ Transform:
   - {fileID: 8500926303486153134}
   - {fileID: 2245517569979591474}
   - {fileID: 8682412761034610145}
+  - {fileID: 6387744474426208371}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7136612127158646578
@@ -87,7 +92,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1022832433659264566}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -101,7 +106,7 @@ MeshRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 6c71b1a76029ee44c929f1b84376b58e, type: 2}
@@ -164,7 +169,7 @@ MonoBehaviour:
   zSpacing: 0
   useClipping: 1
   immutableTriangles: 0
-  pmaVertexColors: 1
+  pmaVertexColors: 0
   clearStateOnDisable: 0
   tintBlack: 0
   singleSubmesh: 0
@@ -201,14 +206,14 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 3
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 8fd28968a5344cc0b6ee487ea1cf9b9f, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
@@ -222,7 +227,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 8fd28968a5344cc0b6ee487ea1cf9b9f, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -263,6 +268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpineSimpleController2D
   rb: {fileID: 4326264124863185150}
   skeletonAnimation: {fileID: 1842584000245803205}
+  punchAttack: {fileID: 7784050719025331142}
   groundLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -279,13 +285,13 @@ MonoBehaviour:
   minTangentXForCompensation: 0.35
   wallCastDistance: 0.08
   wallNormalXThreshold: 0.7
-  moveSpeed: 55
-  jumpForce: 60
+  moveSpeed: 80
+  jumpForce: 100
   airControl: 1
-  fallMultiplier: 20
-  lowJumpMultiplier: 20
-  maxHoldRiseTime: 0.12
-  heldRiseGravityMultiplierAfterMax: 6
+  fallMultiplier: 30
+  lowJumpMultiplier: 30
+  maxHoldRiseTime: 0.2
+  heldRiseGravityMultiplierAfterMax: 20
   jumpBufferTime: 0.12
   coyoteTime: 0.1
   inputDeadzone: 0.01
@@ -309,6 +315,98 @@ MonoBehaviour:
   idleBreakMinTime: 3
   idleBreakMaxTime: 8
   idleBreakChance: 0.6
+--- !u!114 &7016513412288940011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1022832433659264566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7244f77df0c147d690416ce32f1a1d33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health2D
+  team: 1
+  maxHealth: 3
+  invulnerabilityDuration: 0.5
+  destroyOnDeath: 1
+  destroyDelay: 0
+  behavioursToDisableOnDeath:
+  - {fileID: 2436077898841214784}
+  - {fileID: 7784050719025331142}
+  collidersToDisableOnDeath: []
+  rigidbodyToStop: {fileID: 4326264124863185150}
+--- !u!114 &7784050719025331142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1022832433659264566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cb75e9935af4f21a2c2721e74f2a8f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerPunchAttack2D
+  controller: {fileID: 2436077898841214784}
+  ownerHealth: {fileID: 7016513412288940011}
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  targetTeam: 2
+  damage: 1
+  hitDelay: 0.08
+  activeDuration: 0.12
+  hitboxSize: {x: 12, y: 8}
+  hitboxOffset: {x: 7, y: 9}
+--- !u!114 &3815474752492123401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1022832433659264566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e561c18cf0ea46d9ab4dab2b84f7769f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamageBlinkFeedback2D
+  health: {fileID: 7016513412288940011}
+  renderersToBlink:
+  - {fileID: 4036418473144785556}
+  blinkDuration: 0.24
+  blinkCount: 3
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  fillPhaseProperty: _FillPhase
+  fillColorProperty: _FillColor
+  hideOnDeath: 1
+--- !u!114 &3915251459992504271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1022832433659264566}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d61e8d2f8b04775b937bd1db3a9860a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GroundProjectedShadow2D
+  shadowTransform: {fileID: 8682412761034610145}
+  shadowRenderer: {fileID: 2218865518230160907}
+  controller: {fileID: 2436077898841214784}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  rayStartHeight: 2
+  maxShadowDistance: 80
+  surfaceOffset: 0.05
+  baseScale: {x: 12.720456, y: 0.9955139, z: 13.357}
+  minScaleMultiplier: 0.35
+  shrinkDistance: 45
+  positionSmoothTime: 0.06
+  scaleSmoothTime: 0.12
 --- !u!1 &1837514100171040890
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,7 +419,7 @@ GameObject:
   - component: {fileID: 475998336617191910}
   - component: {fileID: 2218865518230160907}
   - component: {fileID: 1482324326165290179}
-  m_Layer: 3
+  m_Layer: 9
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -338,7 +436,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.09, z: 0}
-  m_LocalScale: {x: 12.720456, y: 0.9955139, z: 13.357}
+  m_LocalScale: {x: 19.398695, y: 1.1199532, z: 13.357}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 636272307477570185}
@@ -422,6 +520,90 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2429508495566152056
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6387744474426208371}
+  - component: {fileID: 7045751480403098757}
+  m_Layer: 0
+  m_Name: Spot Light 2D (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6387744474426208371
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2429508495566152056}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: 0.9203415, w: -0.3911158}
+  m_LocalPosition: {x: -1.9, y: 8.4, z: 0}
+  m_LocalScale: {x: 0.80554, y: 0.80554, z: 0.80554}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 636272307477570185}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7045751480403098757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2429508495566152056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.Light2D
+  m_ComponentVersion: 2
+  m_LightType: 3
+  m_BlendStyleIndex: 1
+  m_FalloffIntensity: 0.5
+  m_Color: {r: 0.88612676, g: 1, b: 0.7783019, a: 1}
+  m_Intensity: 0.3
+  m_LightVolumeIntensity: 1
+  m_LightVolumeEnabled: 0
+  m_ApplyToSortingLayers: cb7104ba0000000057f3a039
+  m_LightCookieSprite: {fileID: 0}
+  m_DeprecatedPointLightCookieSprite: {fileID: 0}
+  m_LightOrder: 0
+  m_AlphaBlendOnOverlap: 0
+  m_OverlapOperation: 1
+  m_NormalMapDistance: 3
+  m_NormalMapQuality: 2
+  m_UseNormalMap: 0
+  m_ShadowsEnabled: 0
+  m_ShadowIntensity: 0.75
+  m_ShadowSoftness: 0.3
+  m_ShadowSoftnessFalloffIntensity: 0.5
+  m_ShadowVolumeIntensityEnabled: 0
+  m_ShadowVolumeIntensity: 0.75
+  m_LocalBounds:
+    m_Center: {x: 0, y: -0.00000011920929, z: 0}
+    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
+  m_PointLightInnerAngle: 360
+  m_PointLightOuterAngle: 360
+  m_PointLightInnerRadius: 7.1766644
+  m_PointLightOuterRadius: 28.991003
+  m_ShapeLightParametricSides: 5
+  m_ShapeLightParametricAngleOffset: 0
+  m_ShapeLightParametricRadius: 1
+  m_ShapeLightFalloffSize: 0.5
+  m_ShapeLightFalloffOffset: {x: 0, y: 0}
+  m_ShapePath:
+  - {x: -0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: -0.5, y: 0.5, z: 0}
 --- !u!1 &3828330075504745208
 GameObject:
   m_ObjectHideFlags: 0
@@ -431,7 +613,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8500926303486153134}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}

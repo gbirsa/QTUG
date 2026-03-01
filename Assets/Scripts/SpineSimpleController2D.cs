@@ -10,9 +10,14 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(SkeletonAnimation))]
 public class SpineSimpleController2D : MonoBehaviour
 {
+    public bool IsGrounded => isGrounded;
+    public LayerMask GroundLayer => groundLayer;
+    public float FacingSign => skeletonAnimation != null && skeletonAnimation.Skeleton.ScaleX < 0f ? -1f : 1f;
+
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private SkeletonAnimation skeletonAnimation;
+    [SerializeField] private PlayerPunchAttack2D punchAttack;
 
     [Header("Environment Layers")]
     [SerializeField] private LayerMask groundLayer;
@@ -156,12 +161,14 @@ public class SpineSimpleController2D : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         skeletonAnimation = GetComponent<SkeletonAnimation>();
+        punchAttack = GetComponent<PlayerPunchAttack2D>();
     }
 
     private void Awake()
     {
         if (!rb) rb = GetComponent<Rigidbody2D>();
         if (!skeletonAnimation) skeletonAnimation = GetComponent<SkeletonAnimation>();
+        if (!punchAttack) punchAttack = GetComponent<PlayerPunchAttack2D>();
 
         if (wallLayer == 0) wallLayer = groundLayer;
 
@@ -223,6 +230,8 @@ public class SpineSimpleController2D : MonoBehaviour
         if (punchPressed && !isPunching)
         {
             string punchAnim = isGrounded ? punchUpperGroundAnim : punchUpperAirAnim;
+            if (punchAttack != null)
+                punchAttack.TriggerAttack();
             PlayUpperPunch(punchAnim);
         }
 

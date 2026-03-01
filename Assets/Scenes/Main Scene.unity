@@ -31616,28 +31616,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 2031959880}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 814bc244eba3ddf4bb97f80c72de0193, type: 3}
+  m_Script: {fileID: 11500000, guid: 0cc29c2db0d4499e9e17f37ea89d54e0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraFollow2D
+  m_EditorClassIdentifier: Assembly-CSharp::PlatformerCameraFollow2D
   target: {fileID: 1397480677}
-  childCamera: {fileID: 519420031}
+  framingTarget: {fileID: 0}
   targetRb: {fileID: 1397480680}
+  childCamera: {fileID: 519420031}
   offset: {x: 0, y: 43, z: -192.2}
   smoothTimeX: 0.12
   smoothTimeY: 0.18
+  verticalFollowSmoothTime: 0.4
+  verticalDownFollowSmoothTime: 0.22
+  groundedVerticalRecenterSmoothTime: 0.35
   maxSpeed: Infinity
-  verticalDeadZone: 1.2
-  fallDeadZoneMultiplier: 0.85
-  useLookAhead: 0
+  verticalDeadZoneUp: 40
+  verticalDeadZoneDown: 22
+  descendingVerticalDeadZoneMultiplier: 0.35
+  verticalStopTolerance: 3
+  horizontalDeadZone: 0
+  horizontalStopTolerance: 1
+  useHorizontalLookAhead: 0
   lookAheadDistance: 1.5
   lookAheadSmoothTime: 0.15
+  fallLookAheadDistance: 18
+  fallLookAheadMaxSpeed: 80
   enableIdleZoom: 1
   idleDelay: 5
-  idleZoomInDegrees: 15
-  zoomInSmoothTime: 4
-  zoomOutSmoothTime: 0.4
-  zoomFramingOffset: {x: 0, y: -15.5}
-  zoomFramingSmoothTime: 0.5
+  idleMovementThreshold: 0.5
+  idleZoomAmount: 15
+  idleZoomInSmoothTime: 4
+  idleZoomOutSmoothTime: 0.4
+  idleZoomFramingOffset: {x: 0, y: -15.5}
+  idleZoomFramingSmoothTime: 0.5
 --- !u!4 &2031959882
 Transform:
   m_ObjectHideFlags: 0
@@ -31654,6 +31665,63 @@ Transform:
   - {fileID: 519420032}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2146013377793872910
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1082559185472930887, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082559185472930887, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082559185472930887, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082559185472930887, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082559185472930887, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082559185472930887, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082559185472930887, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082559185472930887, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082559185472930887, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082559185472930887, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044901856533955141, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
+      propertyPath: m_Name
+      value: BasicEnemyBlock
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: cf61667640c1492cab1f5ec225d6f53a, type: 3}
 --- !u!1 &2040480754
 GameObject:
   m_ObjectHideFlags: 0

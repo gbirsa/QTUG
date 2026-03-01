@@ -23,10 +23,16 @@ public class CameraFollow2D : MonoBehaviour
     [SerializeField] private float maxSpeed = Mathf.Infinity;
 
     [Header("Vertical Dead Zone (no bob on small jumps)")]
-    [SerializeField] private float verticalDeadZone = 1.2f;
-    [Tooltip("0.7 = follow falling sooner, 1 = same as normal.")]
-    [SerializeField] private float fallDeadZoneMultiplier = 0.85f;
-
+    [Tooltip("How far above screen center the player can move before the camera starts following vertically.")]
+    [SerializeField] private float verticalScreenFollowThresholdUp = 0.18f;
+    [Tooltip("How far below screen center the player can move before the camera starts following vertically.")]
+    [SerializeField] private float verticalScreenFollowThresholdDown = 0.16f;
+    [Tooltip("How close to screen center the player must be before vertical follow stops again.")]
+    [SerializeField] private float verticalScreenStopFollowTolerance = 0.08f;
+    [Tooltip("Extra downward framing while falling so you can see where you're landing.")]
+    [SerializeField] private float fallLookAheadDistance = 1.25f;
+    [Tooltip("Falling speed where downward look-ahead reaches its maximum.")]
+    [SerializeField] private float fallLookAheadMaxSpeed = 12f;
     [Header("Horizontal Look-Ahead (optional)")]
     [SerializeField] private bool useLookAhead = true;
     [SerializeField] private float lookAheadDistance = 1.5f;
@@ -60,8 +66,9 @@ public class CameraFollow2D : MonoBehaviour
     private float _lookAheadVel;
     private float _currentLookAhead;
 
-    private float _yAnchor;
     private float _idleTimer;
+    private bool _verticalFollowActive;
+    private float _verticalViewportAnchor = 0.5f;
 
     private float _baseFov;
     private float _fovVel;
@@ -82,8 +89,7 @@ public class CameraFollow2D : MonoBehaviour
         if (childCamera)
             _baseFov = childCamera.fieldOfView;
 
-        if (target)
-            _yAnchor = target.position.y;
+        CacheVerticalViewportAnchor();
     }
 
     private void LateUpdate()
@@ -113,21 +119,12 @@ public class CameraFollow2D : MonoBehaviour
 
         // 2) Vertical dead-zone anchor
         float targetY = target.position.y;
-
-        float vy = targetRb ? targetRb.linearVelocity.y : 0f;
-        float dz = verticalDeadZone;
-
-        if (vy < -0.1f)
-            dz *= Mathf.Clamp(fallDeadZoneMultiplier, 0.25f, 2.0f);
-
-        float upper = _yAnchor + dz;
-        float lower = _yAnchor - dz;
-
-        if (targetY > upper) _yAnchor = targetY - dz;
-        else if (targetY < lower) _yAnchor = targetY + dz;
+        float cameraCenterY = rootNoZoom.y - offset.y;
+        float targetViewportY = childCamera.WorldToViewportPoint(target.position).y;
+        float desiredYCenter = GetDesiredCameraCenterY(cameraCenterY, targetY, targetViewportY);
 
         // 3) Base follow target (no zoom offset yet)
-        Vector3 desired = new Vector3(targetX, _yAnchor, target.position.z) + offset;
+        Vector3 desired = new Vector3(targetX, desiredYCenter, target.position.z) + offset;
 
         float newX = Mathf.SmoothDamp(rootNoZoom.x, desired.x, ref _followVel.x, smoothTimeX, maxSpeed);
         float newY = Mathf.SmoothDamp(rootNoZoom.y, desired.y, ref _followVel.y, smoothTimeY, maxSpeed);
@@ -196,13 +193,14 @@ public class CameraFollow2D : MonoBehaviour
     {
         if (!target) return;
 
-        _yAnchor = target.position.y;
+        _verticalFollowActive = false;
 
         _zoomOffsetCurrent = Vector3.zero;
         _zoomOffsetVel = Vector3.zero;
 
         Vector3 desired = target.position + offset;
         transform.position = desired;
+        CacheVerticalViewportAnchor();
 
         _followVel = Vector3.zero;
         _lookAheadVel = 0f;
@@ -215,5 +213,59 @@ public class CameraFollow2D : MonoBehaviour
             childCamera.fieldOfView = _baseFov;
             _fovVel = 0f;
         }
+    }
+
+    private float GetDesiredCameraCenterY(float cameraCenterY, float targetY, float targetViewportY)
+    {
+        float upThreshold = Mathf.Clamp(verticalScreenFollowThresholdUp, 0f, 0.49f);
+        float downThreshold = Mathf.Clamp(verticalScreenFollowThresholdDown, 0f, 0.49f);
+
+        if (upThreshold <= 0f && downThreshold <= 0f)
+        {
+            _verticalFollowActive = false;
+            return targetY;
+        }
+
+        float vy = targetRb ? targetRb.linearVelocity.y : 0f;
+        float anchor = Mathf.Clamp01(_verticalViewportAnchor);
+        float upperTrigger = anchor + upThreshold;
+        float lowerTrigger = anchor - downThreshold;
+
+        if (!_verticalFollowActive)
+        {
+            bool leftUpperDeadZone = targetViewportY > upperTrigger;
+            bool leftLowerDeadZone = targetViewportY < lowerTrigger;
+
+            if (leftUpperDeadZone || leftLowerDeadZone)
+                _verticalFollowActive = true;
+        }
+        else
+        {
+            float distanceFromCenter = Mathf.Abs(targetViewportY - anchor);
+            if (distanceFromCenter <= Mathf.Clamp(verticalScreenStopFollowTolerance, 0f, 0.25f))
+                _verticalFollowActive = false;
+        }
+
+        if (!_verticalFollowActive)
+            return cameraCenterY;
+
+        float fallLookAhead = 0f;
+        if (vy < 0f && fallLookAheadDistance > 0f)
+        {
+            float normalizedFallSpeed = Mathf.Clamp01(Mathf.Abs(vy) / Mathf.Max(0.01f, fallLookAheadMaxSpeed));
+            fallLookAhead = -fallLookAheadDistance * normalizedFallSpeed;
+        }
+
+        return targetY + fallLookAhead;
+    }
+
+    private void CacheVerticalViewportAnchor()
+    {
+        if (!childCamera || !target)
+            return;
+
+        Vector3 viewportPoint = childCamera.WorldToViewportPoint(target.position);
+        if (viewportPoint.z > 0f)
+            _verticalViewportAnchor = viewportPoint.y;
     }
 }
