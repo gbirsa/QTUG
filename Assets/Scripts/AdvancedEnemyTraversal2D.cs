@@ -4,6 +4,10 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class AdvancedEnemyTraversal2D : MonoBehaviour
 {
+    private const float WallMinSurfaceAngle = 55f;
+    private const float WalkableGroundMinNormalY = 0.55f;
+    private const float SeamSuppressMaxLowHitDistance = 0.2f;
+
     [Header("Target")]
     [Tooltip("Optional direct reference to the player target. If empty, the script tries to find a GameObject by Player Tag.")]
     public Transform player;
@@ -65,6 +69,9 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
     [Tooltip("Maximum horizontal distance from the player for the 'player above' jump helper.")]
     public float playerAboveHorizontalTolerance = 0.6f;
 
+    [Tooltip("Minimum absolute ground-height change ahead (up or down) required to trigger jump behavior. Smaller changes are treated as continuous terrain.")]
+    [Min(0f)] public float terrainHeightJumpThreshold = 0.12f;
+
     private Rigidbody2D rb;
     private Collider2D bodyCollider;
     private bool isGrounded;
@@ -78,6 +85,17 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
     private float backoffEndTime;
     private readonly RaycastHit2D[] castHits = new RaycastHit2D[8];
     private ContactFilter2D castFilter;
+    private bool debugWallLowBlocks;
+    private bool debugWallUpperBlocks;
+    private bool debugWallAheadRaw;
+    private bool debugWallSuppressedByContinuity;
+    private bool debugWallAheadFinal;
+    private bool debugHoleAhead;
+    private Vector3 debugFrontFootOrigin;
+    private Vector3 debugFrontUpperOrigin;
+    private Vector3 debugGapOrigin;
+    private float debugForwardDistance;
+    private float debugGapDistance;
 
     private void Start()
     {
@@ -184,6 +202,10 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
     {
         if (direction == 0)
         {
+            debugWallAheadRaw = false;
+            debugWallSuppressedByContinuity = false;
+            debugWallAheadFinal = false;
+            debugHoleAhead = false;
             return false;
         }
 
@@ -196,20 +218,105 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
             bounds.center.x + direction * (bounds.extents.x + 0.05f),
             bounds.min.y + 0.05f
         );
+        Vector2 wallLowOrigin = frontFootOrigin;
         Vector2 frontUpperOrigin = frontFootOrigin + Vector2.up * Mathf.Max(0.05f, upperForwardProbeHeight);
 
-        RaycastHit2D wallLowHit = Physics2D.Raycast(frontFootOrigin, forward, forwardCheckDistance, groundLayer);
+        RaycastHit2D wallLowHit = Physics2D.Raycast(wallLowOrigin, forward, forwardCheckDistance, groundLayer);
         RaycastHit2D wallUpperHit = Physics2D.Raycast(frontUpperOrigin, forward, forwardCheckDistance, groundLayer);
-        bool wallAhead = IsWallLikeHit(wallLowHit, direction) || IsWallLikeHit(wallUpperHit, direction);
+        bool wallLowBlocks = IsWallLikeHit(wallLowHit, direction);
+        bool wallUpperBlocks = IsWallLikeHit(wallUpperHit, direction);
+        bool wallAhead = wallLowBlocks || wallUpperBlocks;
+        bool wallAheadRaw = wallAhead;
+        bool wallSuppressedByContinuity = false;
 
-        Vector2 gapOrigin = frontFootOrigin + forward * forwardCheckDistance;
+        Vector2 nearAheadGroundOrigin = new Vector2(
+            frontFootOrigin.x + forward.x * Mathf.Max(0.08f, bounds.extents.x * 0.35f),
+            bounds.min.y + Mathf.Max(0.2f, upperForwardProbeHeight)
+        );
+        RaycastHit2D nearAheadGroundHit = Physics2D.Raycast(
+            nearAheadGroundOrigin,
+            Vector2.down,
+            Mathf.Max(groundCheckDistance + 0.25f, 0.6f + upperForwardProbeHeight),
+            groundLayer
+        );
+        bool hasWalkableGroundNearAhead =
+            nearAheadGroundHit.collider &&
+            nearAheadGroundHit.normal.y >= WalkableGroundMinNormalY;
+
+        bool seamLikeLowOnlyHit =
+            wallLowBlocks &&
+            !wallUpperBlocks &&
+            wallLowHit.collider &&
+            wallLowHit.distance <= SeamSuppressMaxLowHitDistance;
+
+        if (wallAheadRaw && seamLikeLowOnlyHit && hasWalkableGroundNearAhead)
+        {
+            wallAhead = false;
+            wallSuppressedByContinuity = true;
+        }
+
+        float continuityThreshold = Mathf.Max(0f, terrainHeightJumpThreshold);
+        float continuityProbeDistance = gapCheckDownDistance + Mathf.Max(0.6f, upperForwardProbeHeight);
+        Vector2 currentGroundProbeOrigin = new Vector2(
+            bounds.center.x,
+            bounds.min.y + Mathf.Max(0.2f, upperForwardProbeHeight)
+        );
+        Vector2 aheadGroundProbeOrigin = new Vector2(
+            frontFootOrigin.x + forward.x * forwardCheckDistance,
+            bounds.min.y + Mathf.Max(0.2f, upperForwardProbeHeight)
+        );
+        RaycastHit2D currentGroundHit = Physics2D.Raycast(
+            currentGroundProbeOrigin,
+            Vector2.down,
+            continuityProbeDistance,
+            groundLayer
+        );
+        RaycastHit2D aheadGroundHit = Physics2D.Raycast(
+            aheadGroundProbeOrigin,
+            Vector2.down,
+            continuityProbeDistance,
+            groundLayer
+        );
+        bool hasGroundPairForContinuity =
+            currentGroundHit.collider &&
+            aheadGroundHit.collider &&
+            currentGroundHit.normal.y >= WalkableGroundMinNormalY &&
+            aheadGroundHit.normal.y >= WalkableGroundMinNormalY;
+        bool terrainChangeBelowThreshold = hasGroundPairForContinuity &&
+                                           Mathf.Abs(aheadGroundHit.point.y - currentGroundHit.point.y) <= continuityThreshold;
+        if (terrainChangeBelowThreshold && wallAhead)
+        {
+            wallAhead = false;
+            wallSuppressedByContinuity = true;
+        }
+
+        Vector2 gapOrigin = new Vector2(
+            frontFootOrigin.x + forward.x * forwardCheckDistance,
+            frontFootOrigin.y
+        );
         RaycastHit2D gapHit = Physics2D.Raycast(gapOrigin, Vector2.down, gapCheckDownDistance, groundLayer);
         bool holeAhead = !gapHit.collider;
+        if (terrainChangeBelowThreshold && aheadGroundHit.collider)
+        {
+            holeAhead = false;
+        }
 
         bool isPlayerAbove = player.position.y > transform.position.y + 0.1f &&
                              Mathf.Abs(player.position.x - transform.position.x) <= Mathf.Max(0f, playerAboveHorizontalTolerance);
         RaycastHit2D platformAbove = Physics2D.Raycast(transform.position, Vector2.up, aboveCheckDistance, groundLayer);
         bool shouldJumpForUpperLevel = isPlayerAbove && platformAbove.collider;
+
+        debugWallLowBlocks = wallLowBlocks;
+        debugWallUpperBlocks = wallUpperBlocks;
+        debugWallAheadRaw = wallAheadRaw;
+        debugWallSuppressedByContinuity = wallSuppressedByContinuity;
+        debugWallAheadFinal = wallAhead;
+        debugHoleAhead = holeAhead;
+        debugFrontFootOrigin = new Vector3(wallLowOrigin.x, wallLowOrigin.y, transform.position.z);
+        debugFrontUpperOrigin = new Vector3(frontUpperOrigin.x, frontUpperOrigin.y, transform.position.z);
+        debugGapOrigin = new Vector3(gapOrigin.x, gapOrigin.y, transform.position.z);
+        debugForwardDistance = forwardCheckDistance;
+        debugGapDistance = gapCheckDownDistance;
 
         return wallAhead || holeAhead || shouldJumpForUpperLevel;
     }
@@ -221,7 +328,10 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
             return false;
         }
 
-        return hit.normal.x * moveDirection < -0.15f;
+        bool opposesMovement = hit.normal.x * moveDirection < -0.05f;
+        float surfaceAngleFromUp = Vector2.Angle(hit.normal, Vector2.up);
+        bool isSteepSurface = surfaceAngleFromUp >= WallMinSurfaceAngle;
+        return opposesMovement && isSteepSurface;
     }
 
     private bool CheckGrounded()
@@ -288,5 +398,110 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Collider2D colliderForGizmos = bodyCollider != null ? bodyCollider : GetComponent<Collider2D>();
+        if (colliderForGizmos == null)
+        {
+            return;
+        }
+
+        Bounds bounds = colliderForGizmos.bounds;
+        int direction = GetGizmoDirection();
+
+        float inset = Mathf.Min(0.2f, bounds.extents.x * 0.5f);
+        Vector3 leftGroundOrigin = new Vector3(bounds.min.x + inset, bounds.min.y + 0.05f, transform.position.z);
+        Vector3 rightGroundOrigin = new Vector3(bounds.max.x - inset, bounds.min.y + 0.05f, transform.position.z);
+
+        Gizmos.color = new Color(1f, 0.3f, 0.9f, 0.9f);
+        Gizmos.DrawLine(leftGroundOrigin, leftGroundOrigin + Vector3.down * groundCheckDistance);
+        Gizmos.DrawLine(rightGroundOrigin, rightGroundOrigin + Vector3.down * groundCheckDistance);
+        Gizmos.DrawSphere(leftGroundOrigin, 0.06f);
+        Gizmos.DrawSphere(rightGroundOrigin, 0.06f);
+
+        Vector3 frontFootOrigin = new Vector3(
+            bounds.center.x + direction * (bounds.extents.x + 0.05f),
+            bounds.min.y + 0.05f,
+            transform.position.z
+        );
+        Vector3 frontUpperOrigin = frontFootOrigin + Vector3.up * Mathf.Max(0.05f, upperForwardProbeHeight);
+        float forwardDistance = forwardCheckDistance;
+
+        if (Application.isPlaying)
+        {
+            frontFootOrigin = debugFrontFootOrigin;
+            frontUpperOrigin = debugFrontUpperOrigin;
+            forwardDistance = debugForwardDistance;
+        }
+
+        Color wallColor = new Color(0.1f, 1f, 0.35f, 0.9f);
+        if (Application.isPlaying)
+        {
+            if (debugWallAheadFinal)
+            {
+                wallColor = new Color(1f, 0.2f, 0.2f, 0.95f);
+            }
+            else if (debugWallSuppressedByContinuity)
+            {
+                wallColor = new Color(1f, 0.9f, 0.2f, 0.95f);
+            }
+            else if (debugWallAheadRaw)
+            {
+                wallColor = new Color(1f, 0.5f, 0.1f, 0.95f);
+            }
+        }
+
+        Gizmos.color = wallColor;
+        Gizmos.DrawLine(frontFootOrigin, frontFootOrigin + Vector3.right * direction * forwardDistance);
+        Gizmos.DrawLine(frontUpperOrigin, frontUpperOrigin + Vector3.right * direction * forwardDistance);
+        Gizmos.DrawSphere(frontFootOrigin, 0.06f);
+        Gizmos.DrawSphere(frontUpperOrigin, 0.06f);
+
+        Vector3 gapOrigin = frontFootOrigin + Vector3.right * direction * forwardDistance;
+        float gapDistance = gapCheckDownDistance;
+        if (Application.isPlaying)
+        {
+            gapOrigin = debugGapOrigin;
+            gapDistance = debugGapDistance;
+        }
+
+        Gizmos.color = Application.isPlaying && debugHoleAhead
+            ? new Color(1f, 0.2f, 0.2f, 0.95f)
+            : new Color(0.2f, 0.8f, 1f, 0.95f);
+        Gizmos.DrawLine(gapOrigin, gapOrigin + Vector3.down * gapDistance);
+        Gizmos.DrawSphere(gapOrigin, 0.06f);
+
+        Vector3 airborneWallProbeOrigin = new Vector3(
+            bounds.center.x + direction * bounds.extents.x,
+            bounds.center.y,
+            transform.position.z
+        );
+        Gizmos.color = new Color(1f, 0.45f, 0.1f, 0.95f);
+        Gizmos.DrawLine(
+            airborneWallProbeOrigin,
+            airborneWallProbeOrigin + Vector3.right * direction * airborneWallProbeDistance
+        );
+        Gizmos.DrawSphere(airborneWallProbeOrigin, 0.06f);
+    }
+
+    private int GetGizmoDirection()
+    {
+        if (player != null)
+        {
+            float towardPlayer = player.position.x - transform.position.x;
+            if (Mathf.Abs(towardPlayer) > 0.01f)
+            {
+                return towardPlayer > 0f ? 1 : -1;
+            }
+        }
+
+        if (rb != null && Mathf.Abs(rb.linearVelocity.x) > 0.01f)
+        {
+            return rb.linearVelocity.x > 0f ? 1 : -1;
+        }
+
+        return 1;
     }
 }
