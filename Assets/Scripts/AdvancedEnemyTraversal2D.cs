@@ -4,6 +4,13 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class AdvancedEnemyTraversal2D : MonoBehaviour
 {
+    private enum VerticalIntent
+    {
+        FollowUnder,
+        TryClimb
+    }
+
+    private const int UpperWallProbeSampleCount = 5;
     private const float WallMinSurfaceAngle = 55f;
     private const float WalkableGroundMinNormalY = 0.55f;
     private const float SeamSuppressMaxLowHitDistance = 0.2f;
@@ -60,11 +67,11 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
     [Tooltip("How far down from the forward probe we check for a hole.")]
     public float gapCheckDownDistance = 2f;
 
-    [Tooltip("How far above the enemy we check for geometry when evaluating upward jumps.")]
-    public float aboveCheckDistance = 3f;
-
     [Tooltip("Vertical offset for the upper forward probe used to detect step-like obstacles.")]
     public float upperForwardProbeHeight = 0.35f;
+
+    [Tooltip("Additional vertical range used for a second upper forward probe (base + top) to detect climbable walls at different heights.")]
+    [Min(0f)] public float upperForwardProbeVerticalRange = 0.35f;
 
     [Tooltip("Maximum horizontal distance from the player for the 'player above' jump helper.")]
     public float playerAboveHorizontalTolerance = 0.6f;
@@ -72,14 +79,39 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
     [Tooltip("Minimum absolute ground-height change ahead (up or down) required to trigger jump behavior. Smaller changes are treated as continuous terrain.")]
     [Min(0f)] public float terrainHeightJumpThreshold = 0.12f;
 
+    [Header("Climb Assist")]
+    [Tooltip("Horizontal dead zone around the player's X position while attempting upward follow. Inside this zone, direction will not flip each frame.")]
+    [Min(0f)] public float abovePlayerDeadZoneX = 0.15f;
+
+    [Tooltip("How long the enemy keeps one horizontal direction while attempting to follow a player above.")]
+    [Min(0f)] public float climbDirectionLockTime = 0.4f;
+
+    [Tooltip("Width multiplier (relative to collider width) used by the platform-above overlap check.")]
+    [Min(0.1f)] public float abovePlatformProbeWidthMultiplier = 0.9f;
+
+    [Tooltip("Height of the above-platform detection box used for climb intent checks.")]
+    [Min(0.1f)] public float abovePlatformProbeHeight = 3f;
+
+    [Tooltip("Player vertical offset required to enter climb intent mode. While climbing intent is active, upper forward wall hits are allowed to trigger jumps.")]
+    [Min(0f)] public float climbIntentEnterHeight = 0.45f;
+
+    [Tooltip("Player vertical offset below which climb intent mode is exited. Keep this lower than Enter Height to avoid rapid mode flicker.")]
+    [Min(0f)] public float climbIntentExitHeight = 0.2f;
+
     private Rigidbody2D rb;
     private Collider2D bodyCollider;
     private bool isGrounded;
     private bool shouldJump;
+    private bool playerAboveForUpperJump;
+    private bool platformAboveForUpperJump;
     private float nextJumpTime;
     private float lastJumpTime = -999f;
+    private float climbDirectionLockUntilTime;
+    private VerticalIntent verticalIntent = VerticalIntent.FollowUnder;
     private bool backoffActive;
     private bool pendingBackoffOnLand;
+    private int lockedClimbDirection = 1;
+    private int lastMoveDirection = 1;
     private int failedWallDirection;
     private int backoffDirection;
     private float backoffEndTime;
@@ -93,9 +125,16 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
     private bool debugHoleAhead;
     private Vector3 debugFrontFootOrigin;
     private Vector3 debugFrontUpperOrigin;
+    private Vector3 debugFrontUpperTopOrigin;
     private Vector3 debugGapOrigin;
     private float debugForwardDistance;
     private float debugGapDistance;
+    private Vector2 debugAboveProbeCenter;
+    private Vector2 debugAboveProbeSize;
+    private bool debugAbovePlatformHit;
+    private bool debugPlayerAboveForUpperJump;
+    private bool debugDirectionLockActive;
+    private bool debugTryClimbIntent;
 
     private void Start()
     {
@@ -118,11 +157,32 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
             shouldJump = false;
+            playerAboveForUpperJump = false;
+            platformAboveForUpperJump = false;
+            verticalIntent = VerticalIntent.FollowUnder;
+            debugAbovePlatformHit = false;
+            debugPlayerAboveForUpperJump = false;
+            debugDirectionLockActive = false;
+            debugTryClimbIntent = false;
             return;
         }
 
         isGrounded = CheckGrounded();
-        float direction = Mathf.Sign(player.position.x - transform.position.x);
+        float deltaXToPlayer = player.position.x - transform.position.x;
+        float deltaYToPlayer = player.position.y - transform.position.y;
+        UpdateVerticalIntent(deltaYToPlayer);
+        bool playerAboveByIntent = verticalIntent == VerticalIntent.TryClimb;
+        playerAboveForUpperJump = playerAboveByIntent &&
+                                  Mathf.Abs(deltaXToPlayer) <= Mathf.Max(0f, playerAboveHorizontalTolerance);
+        platformAboveForUpperJump = HasPlatformAbove(out Vector2 aboveProbeCenter, out Vector2 aboveProbeSize);
+        bool climbIntent = playerAboveByIntent && platformAboveForUpperJump;
+        int direction = ResolveHorizontalDirection(deltaXToPlayer, climbIntent);
+        debugAboveProbeCenter = aboveProbeCenter;
+        debugAboveProbeSize = aboveProbeSize;
+        debugAbovePlatformHit = platformAboveForUpperJump;
+        debugPlayerAboveForUpperJump = playerAboveForUpperJump;
+        debugDirectionLockActive = Time.time < climbDirectionLockUntilTime;
+        debugTryClimbIntent = playerAboveByIntent;
 
         if (isGrounded)
         {
@@ -130,7 +190,7 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
             {
                 pendingBackoffOnLand = false;
                 backoffActive = true;
-                backoffDirection = failedWallDirection != 0 ? -failedWallDirection : -(direction > 0f ? 1 : (direction < 0f ? -1 : 0));
+                backoffDirection = failedWallDirection != 0 ? -failedWallDirection : -direction;
                 backoffEndTime = Time.time + Mathf.Max(0f, failedJumpBackoffDuration);
             }
 
@@ -147,11 +207,11 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
             }
 
             rb.linearVelocity = new Vector2(direction * chaseSpeed, rb.linearVelocity.y);
-            shouldJump = ShouldJumpFromGround((int)direction);
+            shouldJump = ShouldJumpFromGround(direction);
         }
         else
         {
-            int directionSign = direction > 0f ? 1 : (direction < 0f ? -1 : 0);
+            int directionSign = direction;
             bool inJumpGrace = Time.time < lastJumpTime + Mathf.Max(0f, wallDetachJumpGraceTime) && rb.linearVelocity.y > 0f;
             bool pressedIntoWall = !inJumpGrace && directionSign != 0 && IsAirbornePressedIntoWall(directionSign);
 
@@ -220,13 +280,27 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
         );
         Vector2 wallLowOrigin = frontFootOrigin;
         Vector2 frontUpperOrigin = frontFootOrigin + Vector2.up * Mathf.Max(0.05f, upperForwardProbeHeight);
+        float upperVerticalRange = Mathf.Max(0f, upperForwardProbeVerticalRange);
+        Vector2 frontUpperTopOrigin = frontUpperOrigin + Vector2.up * upperVerticalRange;
 
         RaycastHit2D wallLowHit = Physics2D.Raycast(wallLowOrigin, forward, forwardCheckDistance, groundLayer);
-        RaycastHit2D wallUpperHit = Physics2D.Raycast(frontUpperOrigin, forward, forwardCheckDistance, groundLayer);
         bool wallLowBlocks = IsWallLikeHit(wallLowHit, direction);
-        bool wallUpperBlocks = IsWallLikeHit(wallUpperHit, direction);
-        bool wallAhead = wallLowBlocks || wallUpperBlocks;
-        bool wallAheadRaw = wallAhead;
+        bool wallUpperBlocks = false;
+        int sampleCount = upperVerticalRange > 0.001f ? UpperWallProbeSampleCount : 1;
+        for (int i = 0; i < sampleCount; i++)
+        {
+            float t = sampleCount == 1 ? 0f : (float)i / (sampleCount - 1);
+            Vector2 sampleOrigin = frontUpperOrigin + Vector2.up * (upperVerticalRange * t);
+            RaycastHit2D wallUpperSampleHit = Physics2D.Raycast(sampleOrigin, forward, forwardCheckDistance, groundLayer);
+            if (IsWallLikeHit(wallUpperSampleHit, direction))
+            {
+                wallUpperBlocks = true;
+                break;
+            }
+        }
+        bool allowUpperWallJump = verticalIntent == VerticalIntent.TryClimb;
+        bool wallAheadRaw = wallLowBlocks || wallUpperBlocks;
+        bool wallAhead = wallLowBlocks || (allowUpperWallJump && wallUpperBlocks);
         bool wallSuppressedByContinuity = false;
 
         Vector2 nearAheadGroundOrigin = new Vector2(
@@ -284,7 +358,8 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
             aheadGroundHit.normal.y >= WalkableGroundMinNormalY;
         bool terrainChangeBelowThreshold = hasGroundPairForContinuity &&
                                            Mathf.Abs(aheadGroundHit.point.y - currentGroundHit.point.y) <= continuityThreshold;
-        if (terrainChangeBelowThreshold && wallAhead)
+        bool applyContinuitySuppression = verticalIntent != VerticalIntent.TryClimb;
+        if (applyContinuitySuppression && terrainChangeBelowThreshold && wallAhead)
         {
             wallAhead = false;
             wallSuppressedByContinuity = true;
@@ -296,15 +371,10 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
         );
         RaycastHit2D gapHit = Physics2D.Raycast(gapOrigin, Vector2.down, gapCheckDownDistance, groundLayer);
         bool holeAhead = !gapHit.collider;
-        if (terrainChangeBelowThreshold && aheadGroundHit.collider)
+        if (applyContinuitySuppression && terrainChangeBelowThreshold && aheadGroundHit.collider)
         {
             holeAhead = false;
         }
-
-        bool isPlayerAbove = player.position.y > transform.position.y + 0.1f &&
-                             Mathf.Abs(player.position.x - transform.position.x) <= Mathf.Max(0f, playerAboveHorizontalTolerance);
-        RaycastHit2D platformAbove = Physics2D.Raycast(transform.position, Vector2.up, aboveCheckDistance, groundLayer);
-        bool shouldJumpForUpperLevel = isPlayerAbove && platformAbove.collider;
 
         debugWallLowBlocks = wallLowBlocks;
         debugWallUpperBlocks = wallUpperBlocks;
@@ -314,11 +384,12 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
         debugHoleAhead = holeAhead;
         debugFrontFootOrigin = new Vector3(wallLowOrigin.x, wallLowOrigin.y, transform.position.z);
         debugFrontUpperOrigin = new Vector3(frontUpperOrigin.x, frontUpperOrigin.y, transform.position.z);
+        debugFrontUpperTopOrigin = new Vector3(frontUpperTopOrigin.x, frontUpperTopOrigin.y, transform.position.z);
         debugGapOrigin = new Vector3(gapOrigin.x, gapOrigin.y, transform.position.z);
         debugForwardDistance = forwardCheckDistance;
         debugGapDistance = gapCheckDownDistance;
 
-        return wallAhead || holeAhead || shouldJumpForUpperLevel;
+        return wallAhead || holeAhead;
     }
 
     private static bool IsWallLikeHit(RaycastHit2D hit, int moveDirection)
@@ -332,6 +403,83 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
         float surfaceAngleFromUp = Vector2.Angle(hit.normal, Vector2.up);
         bool isSteepSurface = surfaceAngleFromUp >= WallMinSurfaceAngle;
         return opposesMovement && isSteepSurface;
+    }
+
+    private int ResolveHorizontalDirection(float deltaXToPlayer, bool climbIntent)
+    {
+        if (climbIntent && Time.time >= climbDirectionLockUntilTime)
+        {
+            int chosen = ChooseDirection(deltaXToPlayer, Mathf.Max(0f, abovePlayerDeadZoneX));
+            if (chosen == 0)
+            {
+                chosen = lastMoveDirection != 0 ? lastMoveDirection : 1;
+            }
+
+            lockedClimbDirection = chosen;
+            climbDirectionLockUntilTime = Time.time + Mathf.Max(0f, climbDirectionLockTime);
+        }
+
+        if (Time.time < climbDirectionLockUntilTime)
+        {
+            lastMoveDirection = lockedClimbDirection != 0 ? lockedClimbDirection : lastMoveDirection;
+            return lockedClimbDirection != 0 ? lockedClimbDirection : 1;
+        }
+
+        int fallbackDirection = ChooseDirection(deltaXToPlayer, 0.01f);
+        if (fallbackDirection != 0)
+        {
+            lastMoveDirection = fallbackDirection;
+            return fallbackDirection;
+        }
+
+        return lastMoveDirection != 0 ? lastMoveDirection : 1;
+    }
+
+    private static int ChooseDirection(float deltaXToPlayer, float deadZone)
+    {
+        float clampedDeadZone = Mathf.Max(0f, deadZone);
+        if (Mathf.Abs(deltaXToPlayer) <= clampedDeadZone)
+        {
+            return 0;
+        }
+
+        return deltaXToPlayer > 0f ? 1 : -1;
+    }
+
+    private void UpdateVerticalIntent(float deltaYToPlayer)
+    {
+        float enterHeight = Mathf.Max(0f, climbIntentEnterHeight);
+        float exitHeight = Mathf.Clamp(climbIntentExitHeight, 0f, enterHeight);
+
+        if (verticalIntent == VerticalIntent.TryClimb)
+        {
+            if (deltaYToPlayer < exitHeight)
+            {
+                verticalIntent = VerticalIntent.FollowUnder;
+            }
+        }
+        else
+        {
+            if (deltaYToPlayer > enterHeight)
+            {
+                verticalIntent = VerticalIntent.TryClimb;
+            }
+        }
+    }
+
+    private bool HasPlatformAbove(out Vector2 probeCenter, out Vector2 probeSize)
+    {
+        Bounds bounds = bodyCollider != null
+            ? bodyCollider.bounds
+            : new Bounds(transform.position, Vector3.one);
+
+        float probeHeight = Mathf.Max(0.1f, abovePlatformProbeHeight);
+        float widthMultiplier = Mathf.Max(0.1f, abovePlatformProbeWidthMultiplier);
+        float probeWidth = Mathf.Max(0.2f, bounds.size.x * widthMultiplier);
+        probeCenter = new Vector2(bounds.center.x, bounds.max.y + probeHeight * 0.5f);
+        probeSize = new Vector2(probeWidth, probeHeight);
+
+        return Physics2D.OverlapBox(probeCenter, probeSize, 0f, groundLayer) != null;
     }
 
     private bool CheckGrounded()
@@ -427,12 +575,14 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
             transform.position.z
         );
         Vector3 frontUpperOrigin = frontFootOrigin + Vector3.up * Mathf.Max(0.05f, upperForwardProbeHeight);
+        Vector3 frontUpperTopOrigin = frontUpperOrigin + Vector3.up * Mathf.Max(0f, upperForwardProbeVerticalRange);
         float forwardDistance = forwardCheckDistance;
 
         if (Application.isPlaying)
         {
             frontFootOrigin = debugFrontFootOrigin;
             frontUpperOrigin = debugFrontUpperOrigin;
+            frontUpperTopOrigin = debugFrontUpperTopOrigin;
             forwardDistance = debugForwardDistance;
         }
 
@@ -456,8 +606,10 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
         Gizmos.color = wallColor;
         Gizmos.DrawLine(frontFootOrigin, frontFootOrigin + Vector3.right * direction * forwardDistance);
         Gizmos.DrawLine(frontUpperOrigin, frontUpperOrigin + Vector3.right * direction * forwardDistance);
+        Gizmos.DrawLine(frontUpperTopOrigin, frontUpperTopOrigin + Vector3.right * direction * forwardDistance);
         Gizmos.DrawSphere(frontFootOrigin, 0.06f);
         Gizmos.DrawSphere(frontUpperOrigin, 0.06f);
+        Gizmos.DrawSphere(frontUpperTopOrigin, 0.06f);
 
         Vector3 gapOrigin = frontFootOrigin + Vector3.right * direction * forwardDistance;
         float gapDistance = gapCheckDownDistance;
@@ -472,6 +624,45 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
             : new Color(0.2f, 0.8f, 1f, 0.95f);
         Gizmos.DrawLine(gapOrigin, gapOrigin + Vector3.down * gapDistance);
         Gizmos.DrawSphere(gapOrigin, 0.06f);
+
+        float aboveProbeHeight = Mathf.Max(0.1f, abovePlatformProbeHeight);
+        float aboveProbeWidth = Mathf.Max(0.2f, bounds.size.x * Mathf.Max(0.1f, abovePlatformProbeWidthMultiplier));
+        Vector3 aboveProbeCenter = new Vector3(
+            bounds.center.x,
+            bounds.max.y + aboveProbeHeight * 0.5f,
+            transform.position.z
+        );
+        Vector3 aboveProbeSize = new Vector3(aboveProbeWidth, aboveProbeHeight, 0f);
+
+        if (Application.isPlaying)
+        {
+            aboveProbeCenter = new Vector3(debugAboveProbeCenter.x, debugAboveProbeCenter.y, transform.position.z);
+            aboveProbeSize = new Vector3(debugAboveProbeSize.x, debugAboveProbeSize.y, 0f);
+        }
+
+        Color aboveColor = new Color(0.45f, 0.45f, 1f, 0.9f);
+        if (Application.isPlaying)
+        {
+            if (debugTryClimbIntent && debugPlayerAboveForUpperJump && debugAbovePlatformHit)
+            {
+                aboveColor = new Color(1f, 0.2f, 0.2f, 0.95f);
+            }
+            else if (debugTryClimbIntent && debugAbovePlatformHit)
+            {
+                aboveColor = new Color(1f, 0.5f, 0.1f, 0.95f);
+            }
+            else if (debugAbovePlatformHit)
+            {
+                aboveColor = new Color(1f, 0.9f, 0.2f, 0.95f);
+            }
+            else if (debugDirectionLockActive)
+            {
+                aboveColor = new Color(0.9f, 0.5f, 0.1f, 0.95f);
+            }
+        }
+
+        Gizmos.color = aboveColor;
+        Gizmos.DrawWireCube(aboveProbeCenter, aboveProbeSize);
 
         Vector3 airborneWallProbeOrigin = new Vector3(
             bounds.center.x + direction * bounds.extents.x,
