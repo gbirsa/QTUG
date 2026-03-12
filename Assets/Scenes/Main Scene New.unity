@@ -42552,7 +42552,8 @@ MonoBehaviour:
   groundCheckDistance: 0.2
   forwardCheckDistance: 15
   gapCheckDownDistance: 8
-  upperForwardProbeHeight: 22.7
+  upperForwardProbeHeight: 17.3
+  upperForwardProbeVerticalRange: 7.81
   playerAboveHorizontalTolerance: 0.6
   terrainHeightJumpThreshold: 0.12
   abovePlayerDeadZoneX: 0.15
