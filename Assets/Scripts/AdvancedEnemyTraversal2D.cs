@@ -4,6 +4,12 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class AdvancedEnemyTraversal2D : MonoBehaviour
 {
+    private enum MovementState
+    {
+        Patrol,
+        Chase
+    }
+
     private enum VerticalIntent
     {
         FollowUnder,
@@ -21,6 +27,35 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
 
     [Tooltip("Tag used to auto-find the player when Player is not assigned.")]
     public string playerTag = "Player";
+
+    [Header("Aggro")]
+    [Tooltip("Width of the aggro rectangle centered on the enemy.")]
+    [Min(0f)] public float aggroWidth = 60f;
+
+    [Tooltip("Height of the aggro rectangle centered on the enemy.")]
+    [Min(0f)] public float aggroHeight = 60f;
+
+    [Header("Patrol")]
+    [Tooltip("Horizontal speed while patrolling.")]
+    public float patrolSpeed = 1f;
+
+    [Tooltip("First patrol point. The enemy moves back and forth between A and B.")]
+    public Transform patrolPointA;
+
+    [Tooltip("Second patrol point. The enemy moves back and forth between A and B.")]
+    public Transform patrolPointB;
+
+    [Tooltip("How close the enemy must be to a patrol point before switching to the other point.")]
+    [Min(0f)] public float patrolPointReachDistance = 0.25f;
+
+    [Tooltip("When patrol begins, move toward point B first. If false, move toward point A first.")]
+    public bool startPatrolTowardPointB = true;
+
+    [Tooltip("How long to wait when reaching patrol point A before moving toward point B.")]
+    [Min(0f)] public float waitAtPointA = 0f;
+
+    [Tooltip("How long to wait when reaching patrol point B before moving toward point A.")]
+    [Min(0f)] public float waitAtPointB = 0f;
 
     [Header("Movement")]
     [Tooltip("Horizontal chase speed while the enemy is grounded.")]
@@ -107,7 +142,11 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
     private float nextJumpTime;
     private float lastJumpTime = -999f;
     private float climbDirectionLockUntilTime;
+    private float patrolWaitUntilTime;
+    private int patrolWaitPointIndex = -1;
+    private bool patrolTowardPointB;
     private VerticalIntent verticalIntent = VerticalIntent.FollowUnder;
+    private MovementState movementState = MovementState.Patrol;
     private bool backoffActive;
     private bool pendingBackoffOnLand;
     private int lockedClimbDirection = 1;
@@ -135,6 +174,7 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
     private bool debugPlayerAboveForUpperJump;
     private bool debugDirectionLockActive;
     private bool debugTryClimbIntent;
+    private bool debugPlayerInAggroRange;
 
     private void Start()
     {
@@ -146,6 +186,7 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
             layerMask = groundLayer,
             useTriggers = false
         };
+        patrolTowardPointB = startPatrolTowardPointB;
         ResolvePlayerIfNeeded();
     }
 
@@ -153,21 +194,23 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
     {
         ResolvePlayerIfNeeded();
 
+        isGrounded = CheckGrounded();
+        bool playerInAggroRange = player != null && IsTargetWithinAggroRange(player.position);
+        debugPlayerInAggroRange = playerInAggroRange;
+        movementState = playerInAggroRange ? MovementState.Chase : MovementState.Patrol;
+
         if (player == null)
         {
-            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-            shouldJump = false;
-            playerAboveForUpperJump = false;
-            platformAboveForUpperJump = false;
-            verticalIntent = VerticalIntent.FollowUnder;
-            debugAbovePlatformHit = false;
-            debugPlayerAboveForUpperJump = false;
-            debugDirectionLockActive = false;
-            debugTryClimbIntent = false;
+            ApplyPatrolMovement();
             return;
         }
 
-        isGrounded = CheckGrounded();
+        if (!playerInAggroRange)
+        {
+            ApplyPatrolMovement();
+            return;
+        }
+
         float deltaXToPlayer = player.position.x - transform.position.x;
         float deltaYToPlayer = player.position.y - transform.position.y;
         UpdateVerticalIntent(deltaYToPlayer);
@@ -183,14 +226,57 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
         debugPlayerAboveForUpperJump = playerAboveForUpperJump;
         debugDirectionLockActive = Time.time < climbDirectionLockUntilTime;
         debugTryClimbIntent = playerAboveByIntent;
+        ApplyTraversalMovement(direction, chaseSpeed);
+    }
+
+    private void FixedUpdate()
+    {
+        if (isGrounded && shouldJump)
+        {
+            if (Time.time < nextJumpTime)
+            {
+                return;
+            }
+
+            shouldJump = false;
+            nextJumpTime = Time.time + Mathf.Max(0f, jumpCooldown);
+            lastJumpTime = Time.time;
+            rb.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+        }
+    }
+
+    private void ApplyPatrolMovement()
+    {
+        playerAboveForUpperJump = false;
+        platformAboveForUpperJump = false;
+        verticalIntent = VerticalIntent.FollowUnder;
+        debugAbovePlatformHit = false;
+        debugPlayerAboveForUpperJump = false;
+        debugDirectionLockActive = false;
+        debugTryClimbIntent = false;
+
+        int direction = ResolvePatrolDirection();
+        ApplyTraversalMovement(direction, patrolSpeed);
+    }
+
+    private void ApplyTraversalMovement(int direction, float moveSpeed)
+    {
+        if (direction != 0)
+        {
+            lastMoveDirection = direction;
+        }
+
+        float clampedMoveSpeed = Mathf.Max(0f, moveSpeed);
 
         if (isGrounded)
         {
+            int fallbackDirection = direction != 0 ? direction : (lastMoveDirection != 0 ? lastMoveDirection : 1);
+
             if (pendingBackoffOnLand)
             {
                 pendingBackoffOnLand = false;
                 backoffActive = true;
-                backoffDirection = failedWallDirection != 0 ? -failedWallDirection : -direction;
+                backoffDirection = failedWallDirection != 0 ? -failedWallDirection : -fallbackDirection;
                 backoffEndTime = Time.time + Mathf.Max(0f, failedJumpBackoffDuration);
             }
 
@@ -206,56 +292,93 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
                 backoffActive = false;
             }
 
-            rb.linearVelocity = new Vector2(direction * chaseSpeed, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(direction * clampedMoveSpeed, rb.linearVelocity.y);
             shouldJump = ShouldJumpFromGround(direction);
-        }
-        else
-        {
-            int directionSign = direction;
-            bool inJumpGrace = Time.time < lastJumpTime + Mathf.Max(0f, wallDetachJumpGraceTime) && rb.linearVelocity.y > 0f;
-            bool pressedIntoWall = !inJumpGrace && directionSign != 0 && IsAirbornePressedIntoWall(directionSign);
-
-            if (pressedIntoWall)
-            {
-                failedWallDirection = directionSign;
-                pendingBackoffOnLand = true;
-                float detachX = -directionSign * Mathf.Max(0f, wallDetachPush);
-                float dropY = Mathf.Min(rb.linearVelocity.y, -Mathf.Max(0f, stuckWallDropSpeed));
-                rb.linearVelocity = new Vector2(detachX, dropY);
-                return;
-            }
-
-            float airSpeed = direction * chaseSpeed * airControl;
-            float currentX = rb.linearVelocity.x;
-
-            if (Mathf.Sign(currentX) == Mathf.Sign(airSpeed) && Mathf.Abs(currentX) > Mathf.Abs(airSpeed))
-            {
-                airSpeed = currentX;
-            }
-
-            rb.linearVelocity = new Vector2(airSpeed, rb.linearVelocity.y);
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        if (player == null)
-        {
             return;
         }
 
-        if (isGrounded && shouldJump)
+        int directionSign = direction != 0 ? direction : (lastMoveDirection != 0 ? lastMoveDirection : 1);
+        bool inJumpGrace = Time.time < lastJumpTime + Mathf.Max(0f, wallDetachJumpGraceTime) && rb.linearVelocity.y > 0f;
+        bool pressedIntoWall = !inJumpGrace && directionSign != 0 && IsAirbornePressedIntoWall(directionSign);
+
+        if (pressedIntoWall)
         {
-            if (Time.time < nextJumpTime)
+            failedWallDirection = directionSign;
+            pendingBackoffOnLand = true;
+            float detachX = -directionSign * Mathf.Max(0f, wallDetachPush);
+            float dropY = Mathf.Min(rb.linearVelocity.y, -Mathf.Max(0f, stuckWallDropSpeed));
+            rb.linearVelocity = new Vector2(detachX, dropY);
+            return;
+        }
+
+        float desiredSpeed = direction * clampedMoveSpeed * Mathf.Max(0f, airControl);
+        float currentX = rb.linearVelocity.x;
+        if (Mathf.Sign(currentX) == Mathf.Sign(desiredSpeed) && Mathf.Abs(currentX) > Mathf.Abs(desiredSpeed))
+        {
+            desiredSpeed = currentX;
+        }
+
+        rb.linearVelocity = new Vector2(desiredSpeed, rb.linearVelocity.y);
+    }
+
+    private int ResolvePatrolDirection()
+    {
+        Vector2 currentPosition = transform.position;
+        if (!TryGetPatrolPoints(out Vector2 pointA, out Vector2 pointB))
+        {
+            patrolWaitPointIndex = -1;
+            return 0;
+        }
+
+        float reachDistance = Mathf.Max(0f, patrolPointReachDistance);
+        Vector2 targetPoint = patrolTowardPointB ? pointB : pointA;
+        int targetPointIndex = patrolTowardPointB ? 1 : 0;
+        bool targetReached = (currentPosition - targetPoint).sqrMagnitude <= reachDistance * reachDistance;
+        if (targetReached)
+        {
+            if (patrolWaitPointIndex != targetPointIndex)
             {
-                return;
+                patrolWaitPointIndex = targetPointIndex;
+                float waitDuration = targetPointIndex == 0
+                    ? Mathf.Max(0f, waitAtPointA)
+                    : Mathf.Max(0f, waitAtPointB);
+                patrolWaitUntilTime = Time.time + waitDuration;
             }
 
-            shouldJump = false;
-            nextJumpTime = Time.time + Mathf.Max(0f, jumpCooldown);
-            lastJumpTime = Time.time;
-            rb.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+            if (Time.time < patrolWaitUntilTime)
+            {
+                return 0;
+            }
+
+            patrolWaitPointIndex = -1;
+            patrolTowardPointB = !patrolTowardPointB;
+            targetPoint = patrolTowardPointB ? pointB : pointA;
         }
+        else if (patrolWaitPointIndex == targetPointIndex)
+        {
+            patrolWaitPointIndex = -1;
+        }
+
+        float deltaX = targetPoint.x - currentPosition.x;
+        if (Mathf.Abs(deltaX) <= 0.02f)
+        {
+            return 0;
+        }
+
+        return deltaX > 0f ? 1 : -1;
+    }
+
+    private bool TryGetPatrolPoints(out Vector2 pointA, out Vector2 pointB)
+    {
+        pointA = patrolPointA != null ? (Vector2)patrolPointA.position : Vector2.zero;
+        pointB = patrolPointB != null ? (Vector2)patrolPointB.position : Vector2.zero;
+
+        if (patrolPointA == null || patrolPointB == null)
+        {
+            return false;
+        }
+
+        return (pointA - pointB).sqrMagnitude > 0.0001f;
     }
 
     private bool ShouldJumpFromGround(int direction)
@@ -517,6 +640,17 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
         }
     }
 
+    private bool IsTargetWithinAggroRange(Vector2 targetPosition)
+    {
+        float clampedHalfWidth = Mathf.Max(0f, aggroWidth) * 0.5f;
+        float clampedHalfHeight = Mathf.Max(0f, aggroHeight) * 0.5f;
+        Vector2 aggroCenter = bodyCollider != null
+            ? bodyCollider.bounds.center
+            : (Vector2)transform.position;
+        Vector2 delta = targetPosition - aggroCenter;
+        return Mathf.Abs(delta.x) <= clampedHalfWidth && Mathf.Abs(delta.y) <= clampedHalfHeight;
+    }
+
     private bool IsAirbornePressedIntoWall(int moveDirection)
     {
         if (bodyCollider == null)
@@ -558,6 +692,45 @@ public class AdvancedEnemyTraversal2D : MonoBehaviour
 
         Bounds bounds = colliderForGizmos.bounds;
         int direction = GetGizmoDirection();
+
+        {
+            float clampedWidth = Mathf.Max(0f, aggroWidth);
+            float clampedHeight = Mathf.Max(0f, aggroHeight);
+            float clampedHalfWidth = clampedWidth * 0.5f;
+            float clampedHalfHeight = clampedHeight * 0.5f;
+            Vector3 aggroCenter = new Vector3(bounds.center.x, bounds.center.y, transform.position.z);
+            Vector3 aggroSize = new Vector3(clampedWidth, clampedHeight, 0f);
+            bool playerInRange = false;
+
+            if (player != null)
+            {
+                Vector2 deltaToPlayer = (Vector2)player.position - (Vector2)bounds.center;
+                playerInRange = Mathf.Abs(deltaToPlayer.x) <= clampedHalfWidth &&
+                                Mathf.Abs(deltaToPlayer.y) <= clampedHalfHeight;
+            }
+
+            if (Application.isPlaying)
+            {
+                playerInRange = debugPlayerInAggroRange;
+            }
+
+            Gizmos.color = playerInRange
+                ? new Color(0.2f, 1f, 0.35f, 0.95f)
+                : new Color(1f, 0.6f, 0.1f, 0.95f);
+            Gizmos.DrawWireCube(aggroCenter, aggroSize);
+        }
+
+        if (patrolPointA != null && patrolPointB != null)
+        {
+            Vector3 pointA = patrolPointA.position;
+            Vector3 pointB = patrolPointB.position;
+            pointA.z = transform.position.z;
+            pointB.z = transform.position.z;
+            Gizmos.color = new Color(0.2f, 0.95f, 1f, 0.95f);
+            Gizmos.DrawLine(pointA, pointB);
+            Gizmos.DrawSphere(pointA, 0.12f);
+            Gizmos.DrawSphere(pointB, 0.12f);
+        }
 
         float inset = Mathf.Min(0.2f, bounds.extents.x * 0.5f);
         Vector3 leftGroundOrigin = new Vector3(bounds.min.x + inset, bounds.min.y + 0.05f, transform.position.z);
